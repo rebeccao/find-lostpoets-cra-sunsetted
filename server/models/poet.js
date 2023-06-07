@@ -33,6 +33,8 @@ const PoetSchema = new Schema({
   gen0_thumbnail_url: { type: String, required: true },
 });
 
+// DEBUG Remmove or restructure once system is solid 
+console.log(`poet.js ******* ${mongoose.connection.readyState}`); 
 
 // Export model
 module.exports = mongoose.model("Poet", PoetSchema);

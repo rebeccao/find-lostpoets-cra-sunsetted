@@ -11,11 +11,32 @@ const app = express();
 // Set up mongoose connection
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
-const mongoDB = "mongodb://127.0.0.1:27017/poetsDB";
+const mongoDB = "mongodb://localhost:27017/poetsDB";        //const mongoDB = "mongodb://127.0.0.1:27017/poetsDB";
+
+// DEBUG 
+// Log the mongo connection readyState and on event emitters
+console.log(`app.js connection readyState ${mongoose.connection.readyState}`); //logs 0
+mongoose.connection.on('connecting', () => { 
+  console.log('connecting')
+  console.log(`app.js connection readyState ${mongoose.connection.readyState}`); //logs 2
+});
+mongoose.connection.on('connected', () => {
+  console.log('connected');
+  console.log(`app.js connection readyState ${mongoose.connection.readyState}`); //logs 1
+});
+mongoose.connection.on('disconnecting', () => {
+  console.log('disconnecting');
+  console.log(`app.js connection readyState ${mongoose.connection.readyState}`); // logs 3
+});
+mongoose.connection.on('disconnected', () => {
+  console.log('disconnected');
+  console.log(`app.js connection readyState ${mongoose.connection.readyState}`); //logs 0
+});
 
 main().catch((err) => console.log(err));
 async function main() {
-  await mongoose.connect(mongoDB);
+  const conn = await mongoose.connect(mongoDB);
+  console.log(`app.js ******* MongoDB now connected to ${conn.connection.host}`);
 }
 
 // view engine setup
@@ -43,7 +64,13 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  // DEBUG Replace json with render once it is set up 
+  //res.render('error');
+  res.json({
+    status: err.statusCode,
+    message: err.message,
+    error: err
+  });
 });
 
 module.exports = app;

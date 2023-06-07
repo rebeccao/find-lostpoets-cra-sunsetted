@@ -3,7 +3,11 @@ const asyncHandler = require("express-async-handler");
 
 // GET /
 exports.index = asyncHandler(async (req, res, next) => {
-  res.json({ message: "NOT IMPLEMENTED: Site Home Page" });
+  const poet = await Poet.find( { "poet_id" : 24932 } );      // const poet = await Poet.findOne();
+  res.json({ message: `Poet = ${poet}`});                     // console.log(`******poet = ${poet}`);
+
+  const numPoets = await Poet.countDocuments({}).exec();
+  //res.json({ message: `Poet count = ${numPoets}`});         // res.send(`poet count = ${ numPoets }`);
 });
 
 // GET api
