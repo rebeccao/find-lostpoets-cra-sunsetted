@@ -1,26 +1,47 @@
 // client/src/App.js
 
-import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import React, { useState, useRef, useEffect } from "react";
+import ToDoList from "./ToDoList";
+
+const LOCAL_STORAGE_KEY = 'todoApp.todos'
 
 function App() {
-  const [data, setData] = React.useState(null);
+  const [todos, setTodos] = useState([])
+  const toDoNameRef = useRef()
 
-  React.useEffect(() => {
-    fetch("/api")
-      .then((res) => res.json())
-      .then((data) => setData(data.message));
-  }, []);
+  useEffect(() => {
+    const storedToDos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
+    if (storedToDos) setTodos(storedToDos)
+  }, [])
 
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos))
+  }, [todos])
+
+  function toggleToDo(id) {
+    const newToDos = [...todos]
+    const todo = newToDos.find(todo => todo.id === id)
+    todo.complete = !todo.complete
+    setTodos(newToDos) 
+  }
+
+  function handleAddToDo(e) {
+    const name = toDoNameRef.current.value
+    if (name === '') return
+    setTodos(prevTodos => {
+      return [...prevTodos, { id: 1, name: name, complete: false }]
+    })
+    toDoNameRef.current.value = null
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>{!data ? "Loading..." : data}</p>
-      </header>
-    </div>
-  );
+    <>
+      <ToDoList todos={todos} toggleToDo={toggleToDo} />
+      <input ref={toDoNameRef} type="text" />
+      <button onClick={handleAddToDo} >Add ToDo</button>
+      <button>Clear Completed</button>
+      <div>0 left to do</div>
+    </>
+  )
 }
 
 export default App;

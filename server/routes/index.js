@@ -10,28 +10,9 @@ const poet_controller = require("../controllers/poetController");
 router.get("/", poet_controller.index);
 
 // GET api
-router.get("/api", function (req, res) {
-  res.json({ message: "Hello from Express!" });
-});
-/*
-// GET api
-router.get("/api", function (req, res) {
-  res.json({ message: "Hello from Express!" });
-});*/
+router.get("/api", poet_controller.api);
 
 // GET request for one Poet.
 //router.get("/poet/:id", poet_controller.poet_detail);
 
 module.exports = router;
-
-
-/*
-const express = require('express');
-const router = express.Router();
-
-// GET home page.
-router.get("/", function (req, res) {
-  res.redirect("/library");
-});
-
-module.exports = router;*/
